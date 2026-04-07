@@ -245,6 +245,27 @@ images
 npm run start:dev
 ```
 
+
+### 6. MinIO Setup (Public Access)
+
+By default, the images bucket in MinIO is private, which means uploaded image URLs will return AccessDenied when accessed via a browser.
+
+To enable direct access to uploaded images (required for this task), you need to configure the bucket with public read permissions.
+
+Step 1: Enter the MinIO container
+docker exec -it image-api-minio sh
+
+Step 2: Configure MinIO client and set public access
+
+```mc alias set local http://localhost:9000 minio minio123```
+```mc anonymous set download local/images```
+
+Step 3: Verify
+
+After applying the policy, uploaded image URLs should be accessible directly in the browser:
+
+http://localhost:9000/images/<file-name>.webp
+
 ---
 
 ## 📖 API Documentation
