@@ -5,12 +5,16 @@ import {
   Post,
   UploadedFile,
   UseInterceptors,
+  Get,
+  Param,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ImagesService } from './images.service';
 import { CreateImageDto } from './dto/create-image.dto';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { GetImagesQueryDto } from './dto/get-images-query.dto';
 
 @ApiTags('Images')
 @Controller('images')
@@ -58,5 +62,15 @@ export class ImagesController {
     }
 
     return this.imagesService.upload(file, body);
+  }
+
+  @Get()
+  findAll(@Query() query: GetImagesQueryDto) {
+    return this.imagesService.findAll(query);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.imagesService.findOne(id);
   }
 }
