@@ -12,9 +12,9 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ImagesService } from './images.service';
-import { CreateImageDto } from './dto/create-image.dto';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { GetImagesQueryDto } from './dto/get-images-query.dto';
+import { GetImagesQueryDTO } from './dto/get-images-query.dto';
+import { CreateImageDTO } from './dto/create-image.dto';
 
 @ApiTags('Images')
 @Controller('images')
@@ -52,7 +52,7 @@ export class ImagesController {
       limits: { fileSize: 5 * 1024 * 1024 },
     }),
   )
-  upload(@UploadedFile() file: Express.Multer.File, @Body() body: CreateImageDto) {
+  upload(@UploadedFile() file: Express.Multer.File, @Body() body: CreateImageDTO) {
     if (!file) {
       throw new BadRequestException('File is required');
     }
@@ -65,7 +65,7 @@ export class ImagesController {
   }
 
   @Get()
-  findAll(@Query() query: GetImagesQueryDto) {
+  findAll(@Query() query: GetImagesQueryDTO) {
     return this.imagesService.findAll(query);
   }
 

@@ -186,6 +186,7 @@ Create `.env` file based on `.env.example`:
 
 ```env
 PORT=3000
+BASE_URL=http://localhost:9000
 
 DB_HOST=localhost
 DB_PORT=5432

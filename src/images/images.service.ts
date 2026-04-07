@@ -4,9 +4,9 @@ import { Repository } from 'typeorm';
 import sharp from 'sharp';
 import { ImageEntity } from './image.entity';
 import { StorageService } from '../storage/storage.service';
-import { CreateImageDto } from './dto/create-image.dto';
+import { CreateImageDTO } from './dto/create-image.dto';
 import { NotFoundException } from '@nestjs/common';
-import { GetImagesQueryDto } from './dto/get-images-query.dto';
+import { GetImagesQueryDTO } from './dto/get-images-query.dto';
 
 @Injectable()
 export class ImagesService {
@@ -16,7 +16,7 @@ export class ImagesService {
     private storageService: StorageService,
   ) {}
 
-  async upload(file: Express.Multer.File, dto: CreateImageDto) {
+  async upload(file: Express.Multer.File, dto: CreateImageDTO) {
     const processed = await sharp(file.buffer)
       .resize(dto.width, dto.height, { fit: 'cover' })
       .webp({ quality: 82 })
@@ -36,20 +36,20 @@ export class ImagesService {
     return this.repo.save(image);
   }
 
-  async findAll(query: GetImagesQueryDto) {
+  async findAll(query: GetImagesQueryDTO) {
     const { title, page = 1, limit = 10 } = query;
 
-    const qb = this.repo.createQueryBuilder('image');
+    const queryBuilder = this.repo.createQueryBuilder('image');
 
     if (title) {
-      qb.where('image.title ILIKE :title', { title: `%${title}%` });
+      queryBuilder.where('image.title ILIKE :title', { title: `%${title}%` });
     }
 
-    qb.orderBy('image.createdAt', 'DESC');
-    qb.skip((page - 1) * limit);
-    qb.take(limit);
+    queryBuilder.orderBy('image.createdAt', 'DESC');
+    queryBuilder.skip((page - 1) * limit);
+    queryBuilder.take(limit);
 
-    const [items, total] = await qb.getManyAndCount();
+    const [items, total] = await queryBuilder.getManyAndCount();
 
     return {
       data: items.map((image) => ({

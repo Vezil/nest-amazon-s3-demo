@@ -7,6 +7,9 @@ import { AppModule } from '../src/app.module';
 import { StorageService } from '../src/storage/storage.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ImageEntity } from '../src/images/image.entity';
+import 'dotenv/config';
+
+const BASE_URL = process.env.BASE_URL ?? 'http://localhost:9000';
 
 describe('ImagesController (e2e)', () => {
   let app: INestApplication;
@@ -15,7 +18,7 @@ describe('ImagesController (e2e)', () => {
   const storageServiceMock = {
     uploadFile: jest.fn().mockResolvedValue({
       key: 'test-file.webp',
-      url: 'http://localhost:9000/images/test-file.webp',
+      url: `${BASE_URL}/images/test-file.webp`,
     }),
   };
 
@@ -77,7 +80,7 @@ describe('ImagesController (e2e)', () => {
       expect.objectContaining({
         id: expect.any(String),
         title: 'test image',
-        url: 'http://localhost:9000/images/test-file.webp',
+        url: `${BASE_URL}/images/test-file.webp`,
         width: 100,
         height: 100,
         mimeType: 'image/webp',
@@ -91,7 +94,7 @@ describe('ImagesController (e2e)', () => {
     await imageRepository.save([
       imageRepository.create({
         title: 'cat one',
-        url: 'http://localhost:9000/images/1.webp',
+        url: `${BASE_URL}/images/1.webp`,
         storageKey: '1.webp',
         width: 100,
         height: 100,
@@ -99,7 +102,7 @@ describe('ImagesController (e2e)', () => {
       }),
       imageRepository.create({
         title: 'dog two',
-        url: 'http://localhost:9000/images/2.webp',
+        url: `${BASE_URL}/images/2.webp`,
         storageKey: '2.webp',
         width: 200,
         height: 200,
@@ -137,7 +140,7 @@ describe('ImagesController (e2e)', () => {
     await imageRepository.save([
       imageRepository.create({
         title: 'cat alpha',
-        url: 'http://localhost:9000/images/1.webp',
+        url: `${BASE_URL}/images/1.webp`,
         storageKey: '1.webp',
         width: 100,
         height: 100,
@@ -145,7 +148,7 @@ describe('ImagesController (e2e)', () => {
       }),
       imageRepository.create({
         title: 'dog beta',
-        url: 'http://localhost:9000/images/2.webp',
+        url: `${BASE_URL}/images/2.webp`,
         storageKey: '2.webp',
         width: 200,
         height: 200,
@@ -160,10 +163,12 @@ describe('ImagesController (e2e)', () => {
   });
 
   it('GET /images/:id should return single image', async () => {
+    const imageTitle = 'single image';
+
     const image = await imageRepository.save(
       imageRepository.create({
-        title: 'single image',
-        url: 'http://localhost:9000/images/single.webp',
+        title: imageTitle,
+        url: `${BASE_URL}/images/single.webp`,
         storageKey: 'single.webp',
         width: 300,
         height: 200,
@@ -175,8 +180,8 @@ describe('ImagesController (e2e)', () => {
 
     expect(response.body).toEqual({
       id: image.id,
-      title: 'single image',
-      url: 'http://localhost:9000/images/single.webp',
+      title: imageTitle,
+      url: `${BASE_URL}/images/single.webp`,
       width: 300,
       height: 200,
     });
