@@ -5,6 +5,7 @@ import { ImagesModule } from './images/images.module';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
 
     ImagesModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
