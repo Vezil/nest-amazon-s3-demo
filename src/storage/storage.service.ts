@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { randomUUID } from 'crypto';
 
 @Injectable()
 export class StorageService {
+  private readonly logger = new Logger(StorageService.name);
   private s3: S3Client;
   private bucket: string;
 
@@ -37,5 +38,23 @@ export class StorageService {
     const url = `${this.configService.get<string>('S3_ENDPOINT')}/${this.bucket}/${key}`;
 
     return { key, url };
+  }
+
+  async deleteFile(key: string) {
+    await this.s3.send(
+      new DeleteObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+      }),
+    );
+  }
+
+  // Best-effort cleanup for compensating actions — never throws.
+  async safeDeleteFile(key: string) {
+    try {
+      await this.deleteFile(key);
+    } catch (err) {
+      this.logger.error(`Failed to delete orphan S3 object ${key}`, err as Error);
+    }
   }
 }

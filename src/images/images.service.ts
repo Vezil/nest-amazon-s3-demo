@@ -1,11 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import sharp from 'sharp';
 import { ImageEntity } from './image.entity';
 import { StorageService } from '../storage/storage.service';
 import { CreateImageDTO } from './dto/create-image.dto';
-import { NotFoundException } from '@nestjs/common';
 import { GetImagesQueryDTO } from './dto/get-images-query.dto';
 
 @Injectable()
@@ -13,6 +12,8 @@ export class ImagesService {
   constructor(
     @InjectRepository(ImageEntity)
     private repo: Repository<ImageEntity>,
+    @InjectDataSource()
+    private dataSource: DataSource,
     private storageService: StorageService,
   ) {}
 
@@ -24,16 +25,22 @@ export class ImagesService {
 
     const { key, url } = await this.storageService.uploadFile(processed, 'image/webp');
 
-    const image = this.repo.create({
-      title: dto.title,
-      url,
-      storageKey: key,
-      width: dto.width,
-      height: dto.height,
-      mimeType: 'image/webp',
-    });
-
-    return this.repo.save(image);
+    try {
+      return await this.dataSource.transaction(async (manager) => {
+        const image = manager.create(ImageEntity, {
+          title: dto.title,
+          url,
+          storageKey: key,
+          width: dto.width,
+          height: dto.height,
+          mimeType: 'image/webp',
+        });
+        return manager.save(image);
+      });
+    } catch (err) {
+      await this.storageService.safeDeleteFile(key);
+      throw err;
+    }
   }
 
   async findAll(query: GetImagesQueryDTO) {

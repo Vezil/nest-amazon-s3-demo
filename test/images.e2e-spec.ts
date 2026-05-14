@@ -20,6 +20,8 @@ describe('ImagesController (e2e)', () => {
       key: 'test-file.webp',
       url: `${BASE_URL}/images/test-file.webp`,
     }),
+    deleteFile: jest.fn().mockResolvedValue(undefined),
+    safeDeleteFile: jest.fn().mockResolvedValue(undefined),
   };
 
   beforeAll(async () => {
