@@ -3,7 +3,11 @@ import { IsOptional, IsString, IsInt, Min, Max, MaxLength } from 'class-validato
 import { Type } from 'class-transformer';
 
 export class GetImagesQueryDTO {
-  @ApiPropertyOptional({ example: 'cat', description: 'Filter by title (contains)', maxLength: 255 })
+  @ApiPropertyOptional({
+    example: 'cat',
+    description: 'Filter by title (contains)',
+    maxLength: 255,
+  })
   @IsOptional()
   @IsString()
   @MaxLength(255)

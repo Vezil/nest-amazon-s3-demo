@@ -85,13 +85,14 @@ export class ImagesController {
   @Get()
   @ApiOperation({ summary: 'Paginated list of images, optionally filtered by title' })
   @ApiOkResponse({ type: PaginatedImagesResponseDTO })
+  @ApiBadRequestResponse({ description: 'Invalid query parameters' })
   findAll(@Query() query: GetImagesQueryDTO) {
     return this.imagesService.findAll(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a single image by id' })
-  @ApiParam({ name: 'id', format: 'uuid' })
+  @ApiParam({ name: 'id', format: 'uuid', example: '7c3e1b2a-9d4f-4c1a-8b2e-3f6a5d8c1e90' })
   @ApiOkResponse({ type: ImageResponseDTO })
   @ApiBadRequestResponse({ description: 'id is not a valid UUID' })
   @ApiNotFoundResponse({ description: 'Image not found' })

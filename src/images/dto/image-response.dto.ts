@@ -1,18 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ImageResponseDTO {
-  @ApiProperty({ format: 'uuid' })
+  @ApiProperty({ format: 'uuid', example: '7c3e1b2a-9d4f-4c1a-8b2e-3f6a5d8c1e90' })
   id: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'cat sleeping' })
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'http://localhost:9000/images/7c3e1b2a-9d4f-4c1a-8b2e-3f6a5d8c1e90.webp',
+  })
   url: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 800 })
   width: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 600 })
   height: number;
 }
